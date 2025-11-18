@@ -2,8 +2,9 @@ import express from 'express';
 
 const router = express.Router();
 
+// Placeholder - To be implemented by your friend
 router.get('/', (req, res) => {
-  res.json({ message: 'Health tip routes - pending setup' });
+  res.json({ success: true, message: 'Health tips routes - Coming soon' });
 });
 
 export default router;

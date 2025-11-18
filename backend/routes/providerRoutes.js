@@ -2,8 +2,9 @@ import express from 'express';
 
 const router = express.Router();
 
+// Placeholder - To be implemented by your friend
 router.get('/', (req, res) => {
-  res.json({ message: 'Provider routes - pending setup' });
+  res.json({ success: true, message: 'Provider routes - Coming soon' });
 });
 
 export default router;
