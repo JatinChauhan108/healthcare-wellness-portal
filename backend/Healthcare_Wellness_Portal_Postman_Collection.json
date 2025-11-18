@@ -1,0 +1,1171 @@
+{
+	"info": {
+		"_postman_id": "healthcare-wellness-portal-001",
+		"name": "Healthcare Wellness Portal - Complete API Testing",
+		"description": "Complete collection for testing all 44+ endpoints of the Healthcare Wellness Portal backend",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "1. Health Check",
+			"item": [
+				{
+					"name": "Server Health Check",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/",
+							"host": ["{{baseUrl}}"],
+							"path": [""]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "2. Authentication",
+			"item": [
+				{
+					"name": "Register Patient",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.collectionVariables.set(\"patientToken\", jsonData.token);",
+									"    pm.collectionVariables.set(\"patientId\", jsonData.user._id);",
+									"    pm.test(\"Patient registered successfully\", function () {",
+									"        pm.expect(jsonData.token).to.exist;",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Test Patient\",\n    \"email\": \"patient{{$randomInt}}@test.com\",\n    \"password\": \"Test@1234\",\n    \"role\": \"patient\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/register",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "auth", "register"]
+						}
+					}
+				},
+				{
+					"name": "Register Provider",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.collectionVariables.set(\"providerToken\", jsonData.token);",
+									"    pm.collectionVariables.set(\"providerId\", jsonData.user._id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Dr. Test Provider\",\n    \"email\": \"provider{{$randomInt}}@test.com\",\n    \"password\": \"Test@1234\",\n    \"role\": \"provider\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/register",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "auth", "register"]
+						}
+					}
+				},
+				{
+					"name": "Login Patient",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.collectionVariables.set(\"patientToken\", jsonData.token);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"patient@test.com\",\n    \"password\": \"Test@1234\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/login",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "auth", "login"]
+						}
+					}
+				},
+				{
+					"name": "Get Current User",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{patientToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/me",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "auth", "me"]
+						}
+					}
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{patientToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/logout",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "auth", "logout"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "3. Profile Management",
+			"item": [
+				{
+					"name": "Get Profile",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{patientToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/profile",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "profile"]
+						}
+					}
+				},
+				{
+					"name": "Update Profile",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{patientToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Updated Patient Name\",\n    \"phone\": \"1234567890\",\n    \"dateOfBirth\": \"1990-01-01\",\n    \"gender\": \"male\",\n    \"address\": \"123 Test St, Test City, TC 12345\",\n    \"emergencyContact\": {\n        \"name\": \"Emergency Contact\",\n        \"phone\": \"9876543210\",\n        \"relationship\": \"spouse\"\n    }\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/profile",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "profile"]
+						}
+					}
+				},
+				{
+					"name": "Get Audit Logs",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{patientToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/profile/audit-logs",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "profile", "audit-logs"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "4. Wellness Goals",
+			"item": [
+				{
+					"name": "Create Steps Goal",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.collectionVariables.set(\"stepsGoalId\", jsonData._id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{patientToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"goalType\": \"steps\",\n    \"targetValue\": 10000,\n    \"unit\": \"steps\",\n    \"frequency\": \"daily\",\n    \"description\": \"Walk 10,000 steps daily for better health\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/goals",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "goals"]
+						}
+					}
+				},
+				{
+					"name": "Create Active Time Goal",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.collectionVariables.set(\"activeGoalId\", jsonData._id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{patientToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"goalType\": \"active_time\",\n    \"targetValue\": 60,\n    \"unit\": \"minutes\",\n    \"frequency\": \"daily\",\n    \"description\": \"Exercise for 60 minutes daily\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/goals",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "goals"]
+						}
+					}
+				},
+				{
+					"name": "Create Sleep Goal",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.collectionVariables.set(\"sleepGoalId\", jsonData._id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{patientToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"goalType\": \"sleep\",\n    \"targetValue\": 8,\n    \"unit\": \"hours\",\n    \"frequency\": \"daily\",\n    \"description\": \"Get 8 hours of quality sleep daily\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/goals",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "goals"]
+						}
+					}
+				},
+				{
+					"name": "Create Water Goal",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{patientToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"goalType\": \"water\",\n    \"targetValue\": 8,\n    \"unit\": \"glasses\",\n    \"frequency\": \"daily\",\n    \"description\": \"Drink 8 glasses of water daily\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/goals",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "goals"]
+						}
+					}
+				},
+				{
+					"name": "Get All Goals",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{patientToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/goals",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "goals"]
+						}
+					}
+				},
+				{
+					"name": "Get Goal by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{patientToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/goals/{{stepsGoalId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "goals", "{{stepsGoalId}}"]
+						}
+					}
+				},
+				{
+					"name": "Update Goal",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{patientToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"targetValue\": 12000,\n    \"description\": \"Updated: Walk 12,000 steps daily for better fitness\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/goals/{{stepsGoalId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "goals", "{{stepsGoalId}}"]
+						}
+					}
+				},
+				{
+					"name": "Log Steps Progress",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    var jsonData = pm.response.json();",
+									"    if (jsonData.log) {",
+									"        pm.collectionVariables.set(\"logId\", jsonData.log._id);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{patientToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"actualValue\": 8500,\n    \"calories\": 1712,\n    \"distance\": 1.23,\n    \"notes\": \"Morning walk and afternoon jog\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/goals/{{stepsGoalId}}/log",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "goals", "{{stepsGoalId}}", "log"]
+						}
+					}
+				},
+				{
+					"name": "Log Active Time Progress",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{patientToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"actualValue\": 56,\n    \"calories\": 450,\n    \"notes\": \"Gym workout session\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/goals/{{activeGoalId}}/log",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "goals", "{{activeGoalId}}", "log"]
+						}
+					}
+				},
+				{
+					"name": "Log Sleep Progress",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{patientToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"actualValue\": 6.5,\n    \"sleepStartTime\": \"23:00\",\n    \"sleepEndTime\": \"05:30\",\n    \"sleepQuality\": \"good\",\n    \"notes\": \"Woke up once during night\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/goals/{{sleepGoalId}}/log",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "goals", "{{sleepGoalId}}", "log"]
+						}
+					}
+				},
+				{
+					"name": "Get Goal Logs",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{patientToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/goals/{{stepsGoalId}}/logs",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "goals", "{{stepsGoalId}}", "logs"]
+						}
+					}
+				},
+				{
+					"name": "Get Goal Dashboard",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{patientToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/goals/dashboard",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "goals", "dashboard"]
+						}
+					}
+				},
+				{
+					"name": "Delete Goal",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{patientToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/goals/{{stepsGoalId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "goals", "{{stepsGoalId}}"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "5. Preventive Care Reminders",
+			"item": [
+				{
+					"name": "Create Reminder - Checkup",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.collectionVariables.set(\"reminderId\", jsonData._id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{patientToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Annual Physical Checkup\",\n    \"description\": \"Schedule annual physical examination with primary care physician\",\n    \"reminderType\": \"checkup\",\n    \"dueDate\": \"2024-06-01\",\n    \"priority\": \"high\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/reminders",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "reminders"]
+						}
+					}
+				},
+				{
+					"name": "Create Reminder - Vaccination",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{patientToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Flu Shot\",\n    \"description\": \"Get annual flu vaccination\",\n    \"reminderType\": \"vaccination\",\n    \"dueDate\": \"2024-10-01\",\n    \"priority\": \"medium\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/reminders",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "reminders"]
+						}
+					}
+				},
+				{
+					"name": "Create Reminder - Screening",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{patientToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Blood Pressure Screening\",\n    \"description\": \"Check blood pressure levels\",\n    \"reminderType\": \"screening\",\n    \"dueDate\": \"2024-05-15\",\n    \"priority\": \"medium\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/reminders",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "reminders"]
+						}
+					}
+				},
+				{
+					"name": "Get All Reminders",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{patientToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/reminders",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "reminders"]
+						}
+					}
+				},
+				{
+					"name": "Get Reminder by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{patientToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/reminders/{{reminderId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "reminders", "{{reminderId}}"]
+						}
+					}
+				},
+				{
+					"name": "Update Reminder",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{patientToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"priority\": \"low\",\n    \"notes\": \"Rescheduled to morning appointment\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/reminders/{{reminderId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "reminders", "{{reminderId}}"]
+						}
+					}
+				},
+				{
+					"name": "Mark Reminder as Complete",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{patientToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/reminders/{{reminderId}}/complete",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "reminders", "{{reminderId}}", "complete"]
+						}
+					}
+				},
+				{
+					"name": "Delete Reminder",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{patientToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/reminders/{{reminderId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "reminders", "{{reminderId}}"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "6. Health Tips",
+			"item": [
+				{
+					"name": "Create Health Tip - Nutrition",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.collectionVariables.set(\"tipId\", jsonData._id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{patientToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Stay Hydrated\",\n    \"content\": \"Drink at least 8-10 glasses of water daily to maintain proper hydration levels and support overall health.\",\n    \"category\": \"nutrition\",\n    \"tags\": [\"hydration\", \"wellness\", \"daily-health\"]\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/health-tips",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "health-tips"]
+						}
+					}
+				},
+				{
+					"name": "Create Health Tip - Exercise",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{patientToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Morning Stretches\",\n    \"content\": \"Start your day with 10 minutes of gentle stretching to improve flexibility and reduce muscle tension.\",\n    \"category\": \"exercise\",\n    \"tags\": [\"stretching\", \"morning-routine\", \"flexibility\"]\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/health-tips",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "health-tips"]
+						}
+					}
+				},
+				{
+					"name": "Create Health Tip - Mental Health",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{patientToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Practice Mindfulness\",\n    \"content\": \"Take 5 minutes daily for mindfulness meditation to reduce stress and improve mental clarity.\",\n    \"category\": \"mental_health\",\n    \"tags\": [\"meditation\", \"stress-relief\", \"mindfulness\"]\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/health-tips",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "health-tips"]
+						}
+					}
+				},
+				{
+					"name": "Get All Health Tips",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{patientToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/health-tips",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "health-tips"]
+						}
+					}
+				},
+				{
+					"name": "Get Tips by Category - Nutrition",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{patientToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/health-tips/category/nutrition",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "health-tips", "category", "nutrition"]
+						}
+					}
+				},
+				{
+					"name": "Get Tips by Category - Exercise",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{patientToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/health-tips/category/exercise",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "health-tips", "category", "exercise"]
+						}
+					}
+				},
+				{
+					"name": "Get Daily Health Tip",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{patientToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/health-tips/daily",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "health-tips", "daily"]
+						}
+					}
+				},
+				{
+					"name": "Get Health Tip by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{patientToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/health-tips/{{tipId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "health-tips", "{{tipId}}"]
+						}
+					}
+				},
+				{
+					"name": "Update Health Tip",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{patientToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"content\": \"Drink at least 8-10 glasses of water daily to maintain proper hydration levels, support digestion, and boost energy.\",\n    \"tags\": [\"hydration\", \"wellness\", \"daily-health\", \"energy\"]\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/health-tips/{{tipId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "health-tips", "{{tipId}}"]
+						}
+					}
+				},
+				{
+					"name": "Delete Health Tip",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{patientToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/health-tips/{{tipId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "health-tips", "{{tipId}}"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "7. Public Health Information",
+			"item": [
+				{
+					"name": "Get COVID-19 Information",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/health-tips/public/covid-19",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "health-tips", "public", "covid-19"]
+						}
+					}
+				},
+				{
+					"name": "Get Flu Prevention Information",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/health-tips/public/flu-prevention",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "health-tips", "public", "flu-prevention"]
+						}
+					}
+				},
+				{
+					"name": "Get Mental Health Awareness",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/health-tips/public/mental-health",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "health-tips", "public", "mental-health"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "8. Provider Routes",
+			"item": [
+				{
+					"name": "Get Assigned Patients",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{providerToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/provider/patients",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "provider", "patients"]
+						}
+					}
+				},
+				{
+					"name": "Assign Patient to Provider",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{providerToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"patientId\": \"{{patientId}}\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/provider/assign",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "provider", "assign"]
+						}
+					}
+				},
+				{
+					"name": "Get Patient Compliance",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{providerToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/provider/patients/{{patientId}}/compliance",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "provider", "patients", "{{patientId}}", "compliance"]
+						}
+					}
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:5000",
+			"type": "string"
+		},
+		{
+			"key": "patientToken",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "providerToken",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "patientId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "providerId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "stepsGoalId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "activeGoalId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "sleepGoalId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "reminderId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "tipId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "logId",
+			"value": "",
+			"type": "string"
+		}
+	]
+}

@@ -34,6 +34,28 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan('dev'));
 
+// Root route
+app.get('/', (req, res) => {
+  res.json({ 
+    success: true, 
+    message: 'Healthcare Wellness Portal API',
+    version: '1.0.0',
+    status: 'running',
+    database: 'mongodb',
+    endpoints: {
+      health: '/health',
+      auth: '/api/auth',
+      profile: '/api/profile',
+      goals: '/api/goals',
+      reminders: '/api/reminders',
+      healthTips: '/api/health-tips',
+      provider: '/api/provider',
+      information: '/api/information'
+    },
+    timestamp: new Date().toISOString()
+  });
+});
+
 // Health check route
 app.get('/health', (req, res) => {
   res.json({ 
