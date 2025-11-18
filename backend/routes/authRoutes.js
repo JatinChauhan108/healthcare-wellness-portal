@@ -1,10 +1,11 @@
 import express from 'express';
+import { register, login, logout, getMe } from '../controllers/authController.js';
+import { authenticate } from '../middleware/auth.js';
 
 const router = express.Router();
 
-// Placeholder - To be implemented by your friend
 router.get('/', (req, res) => {
-  res.json({ success: true, message: 'Auth routes - Coming soon' });
+  res.json({ message: 'Auth routes - pending setup' });
 });
 
 export default router;
