@@ -109,11 +109,13 @@ Public Health Information Page (accessible anytime)
 
 ## Architecture
 
+```ini
 React Frontend
 ↓ (Axios)
 Express REST API
 ↓
 MongoDB Atlas
+```
 
 
 **Architecture Principles**
