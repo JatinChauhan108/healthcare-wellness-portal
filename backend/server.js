@@ -5,7 +5,7 @@ import dotenv from 'dotenv';
 
 // Import database connections
 import { connectMongoDB } from './config/mongodb.js';
-import { connectPostgres } from './config/postgres.js';
+// import { connectPostgres } from './config/postgres.js';
 
 // Import routes
 import authRoutes from './routes/authRoutes.js';
@@ -14,6 +14,7 @@ import goalRoutes from './routes/goalRoutes.js';
 import reminderRoutes from './routes/reminderRoutes.js';
 import providerRoutes from './routes/providerRoutes.js';
 import healthTipRoutes from './routes/healthTipRoutes.js';
+import informationRoutes from './routes/informationRoutes.js';
 
 // Import middleware
 import { errorHandler, notFound } from './middleware/errorHandler.js';
@@ -38,10 +39,7 @@ app.get('/health', (req, res) => {
   res.json({ 
     success: true, 
     message: 'Healthcare Wellness Portal API is running',
-    databases: {
-      postgres: 'Connected',
-      mongodb: 'Connected'
-    },
+    database: 'mongodb',
     timestamp: new Date().toISOString()
   });
 });
@@ -53,6 +51,7 @@ app.use('/api/goals', goalRoutes);
 app.use('/api/reminders', reminderRoutes);
 app.use('/api/provider', providerRoutes);
 app.use('/api/health-tips', healthTipRoutes);
+app.use('/api/information', informationRoutes);
 
 // Error handling
 app.use(notFound);
@@ -61,15 +60,12 @@ app.use(errorHandler);
 // Database connections
 const connectDatabases = async () => {
   try {
-    // Connect to both databases
-    await Promise.all([
-      connectPostgres(),
-      connectMongoDB()
-    ]);
-    console.log('✅ All databases connected successfully');
+    // Connect to MongoDB
+    await connectMongoDB();
+    console.log('✅ MongoDB connected successfully');
   } catch (error) {
-    console.error('❌ Database connection error:', error);
-    process.exit(1);
+    console.error('⚠️  MongoDB connection warning:', error);
+    console.warn('⚠️  Server will continue running...');
   }
 };
 
@@ -80,8 +76,7 @@ connectDatabases().then(() => {
   app.listen(PORT, () => {
     console.log(`🚀 Server running on port ${PORT}`);
     console.log(`📊 Environment: ${process.env.NODE_ENV || 'development'}`);
-    console.log(`🐘 PostgreSQL: User, Audit, Assignments`);
-    console.log(`🍃 MongoDB: Goals, Logs, Reminders, Health Tips`);
+    console.log(`🍃 MongoDB: Goals, Logs, Reminders, Health Tips, Information`);
   });
 });
 
